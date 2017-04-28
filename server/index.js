@@ -1,0 +1,17 @@
+const express = require('express')
+const app = express();
+const port = 8080;
+
+
+app.get('/', function (req, res) {
+  res.send('hello world');
+})
+
+
+app.listen(port, (err) => {
+	if ( err ) {
+		console.log('Server failed to start ', err);
+	} else {
+		console.log(`Sever running on port , ${port}`);
+	}
+});
