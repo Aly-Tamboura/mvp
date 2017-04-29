@@ -10,8 +10,9 @@ const port = process.env.PORT || 8080;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(express.static(__dirname + './node_modules'));
+
 app.use(express.static('./client'));
-app.use(express.static(__dirname + '/../node_modules'));
 
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + './index.html'));
@@ -26,7 +27,6 @@ app.get('/data', function (req, res) {
 		}
 	})
 })
-
 
 app.listen(port, (err) => {
 	if ( err ) {
