@@ -4,10 +4,46 @@
 	<title>Streets Watch</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
 	<script type="text/javascript" src='testdata.js'></script>
+<!--     <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk4ATGmBQDOf3NA08EawrhZZK3o_1ubJg&callback=initMap">
+    </script> -->
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
 	<script type="text/javascript" src='index.js'></script>
 	<script type="text/javascript" src="services/api.js"></script>
-	<script src="http://maps.google.com/maps/api/js"></script>
+<!-- 	<script src="http://maps.google.com/maps/api/js"></script> -->
 	<style>
+		body {
+	    font: bold 12px Arial;
+	     }
+		a {
+		    text-decoration: none;
+		  }
+		#repeat{
+		     display: inline;
+		     }
+		#country_container {
+		     width: 1000px;
+		     margin: 13px 3px 3px 0px;
+		     text-align: center;
+		     width: 85px;
+		     padding: 4px;
+		     display: inline-table;
+		     color: white;
+		     background-color: black;
+		     font-size: 12px;
+		     cursor: pointer;
+		     border: 1px solid black;
+		     border-radius:13px;
+		     }
+		#country_container:hover {
+		     box-shadow: 0px 0px 10px black;
+		     background-color: gray;
+		     border: 1px solid gray;
+		     cursor: pointer;
+		     }
+		#names {
+		     cursor: pointer;
+		       }
 	  #map {
 	    height: 400px;
 	    width: 100%;
@@ -16,22 +52,12 @@
 </head>
 <body ng-app='StreetWatch'>
   <crime-data></crime-data>
-  <div id="map"></div>
-    <script>
-      function initMap() {
-        var uluru = {lat: 37.7833242481047, lng: -122.440341074545};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4,
-          center: uluru
-        });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
-      }
-    </script>
-<!--     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk4ATGmBQDOf3NA08EawrhZZK3o_1ubJg&callback=initMap">
-    </script> -->
+	<div ng-controller="MapCtrl">
+	    <div id="map"></div>
+	    <div id="repeat" ng-repeat="marker in markers | orderBy : 'title'">
+	         <a id="country_container" href="#" ng-click="openInfoWindow($event, marker)">
+	         <label id="names" >{{marker.title}}</label></a>
+	    </div>
+	</div>
 </body>
 </html>
