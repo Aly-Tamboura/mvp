@@ -3,11 +3,34 @@
 <head>
 	<title>Streets Watch</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
-	<script src='index.js'></script>
-
+	<script type="text/javascript" src='testdata.js'></script>
+	<script type="text/javascript" src='index.js'></script>
+	<script type="text/javascript" src="services/api.js"></script>
+	<style>
+	  #map {
+	    height: 400px;
+	    width: 100%;
+	  }
+	 </style>
 </head>
 <body ng-app='StreetWatch'>
-  <h1>Street Watch</h1>
   <crime-data></crime-data>
+  <div id="map"></div>
+    <script>
+      function initMap() {
+        var uluru = {lat: 37.7833242481047, lng: -122.440341074545};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk4ATGmBQDOf3NA08EawrhZZK3o_1ubJg&callback=initMap">
+    </script>
 </body>
 </html>

@@ -1,11 +1,18 @@
-const express = require('express')
+const express = require('express');
+const path = require('path');
+var worker = require('./worker');
 const app = express();
-const port = 8080;
+//const Mongo = require('../database/mongo.js');
 
+const port = process.env.PORT || 8080;
 
-app.get('/', function (req, res) {
-  res.send('hello world');
-})
+app.use(express.static('./client'));
+app.use(express.static(__dirname + '/../node_modules'));
+
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname + './index.html'));
+});
+
 
 
 app.listen(port, (err) => {
