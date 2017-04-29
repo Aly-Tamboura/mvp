@@ -14,12 +14,10 @@ var getData = function(callback) {
 //////////////////////////////////////////////////////////
 // getData(function(err, data) {
 //   if ( err ) {
-// 		console.log('cannot get data' , err);
 //   } else {
-//     //console.log('got the data',data )
 //     var item = JSON.parse(data);
 //     //console.log(parsedData)
-// 	  for (var i = 0; i < 1; i++) {
+// 	  for (var i = 0; i < item.length; i++) {
 
 //       var crime = new Data({
 //       	address: item[i].address,
@@ -35,17 +33,13 @@ var getData = function(callback) {
 // 			  y: item[i].y
 //       })
 
-// 	  	console.log('this is the crime ',crime);
-
 //       crime.save(function(err) {
 //       	if ( err ) {
-//       		console.log('saved');
-//       	} else {
 //       		console.log('error saving');
+//       	} else {
+//       		console.log('saved');
 //       	}
 //       })
 // 	  }
-
 //   }
-
 // })
