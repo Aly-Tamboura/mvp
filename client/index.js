@@ -1,90 +1,106 @@
 
 const app = angular.module('StreetWatch', []);
 
-app.directive("crimeData", function() {
-  return {
-    restrict: `E`,
-    template: `<h1>Street Watch</h1>`
-  };
-});
-//Data
-var cities = [
-              {
-                  city : 'India',
-                  desc : 'This is the best country in the world!',
-                  lat : 23.200000,
-                  long : 79.225487
-              },
-              {
-                  city : 'New Delhi',
-                  desc : 'The Heart of India!',
-                  lat : 28.500000,
-                  long : 77.250000
-              },
-              {
-                  city : 'Mumbai',
-                  desc : 'Bollywood city!',
-                  lat : 19.000000,
-                  long : 72.90000
-              },
-              {
-                  city : 'Kolkata',
-                  desc : 'Howrah Bridge!',
-                  lat : 22.500000,
-                  long : 88.400000
-              },
-              {
-                  city : 'Chennai  ',
-                  desc : 'Kathipara Bridge!',
-                  lat : 13.000000,
-                  long : 80.250000
-              }
-          ];
-
- //Angular App Module and Controller
-app.controller('MapCtrl', function ($scope, apiService) {
-
-    var mapOptions = {
-        zoom: 12,
-        center: new google.maps.LatLng(37.784172,-122.401558),
-        mapTypeId: google.maps.MapTypeId.TERRAIN
-    }
-
-    $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-    $scope.markers = [];
-
-    var infoWindow = new google.maps.InfoWindow();
-
-    var createMarker = function (info){
-
-        var marker = new google.maps.Marker({
-            map: $scope.map,
-            position: new google.maps.LatLng(info.lat, info.long),
-            title: info.city
-        });
-        marker.content = '<div class="infoWindowContent">' + info.desc + '</div>';
-
-        google.maps.event.addListener(marker, 'click', function(){
-            infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
-            infoWindow.open($scope.map, marker);
-        });
-
-        $scope.markers.push(marker);
-
-    }
+app.controller('MapCtrl', function ( $scope, apiService) {
+	//get data from database
+	$scope.catLabels = [];
+	$scope.locLabels =[];
+	$scope.dateLabels =[];
+	var obj1 = {}, obj2 = {}, obj3 = {};
 
 	apiService.getCrimeData(function(data) {
 		$scope.data = data;
-  console.log('itis', Number($scope.data[0].x));
-    for (i = 0; i < cities.length; i++){
-        createMarker(cities[i]);
+  	$scope.filterData()
+    $scope.data.forEach(function(record) {
+    	obj1[record.category] = 1;
+    	obj2[record.pddistrict] = 1;
+    	obj3[record.date] = 1;
+    });
+    for(var key in obj1) {
+    	$scope.catLabels.push(key)
+    }
+    for(var key in obj2) {
+    	$scope.locLabels.push(key)
+    }
+    for(var key in obj3) {
+    	$scope.dateLabels.push(key)
     }
 	});
 
-    $scope.openInfoWindow = function(e, selectedMarker){
-        e.preventDefault();
-        google.maps.event.trigger(selectedMarker, 'click');
-    }
+
+  $scope.filterData = function( type, location) {
+  	location = location || 'MISSION';
+  	type = type || 'ASSAULT';
+
+	  var dates = $scope.data.filter(function(item) {
+      if ( item.pddistrict === location && item.category === type) {
+      	return item
+      }
+	  });
+	  for (var i = 0; i < dates.length; i++) {
+			createMarker(dates[i])
+		}
+  }
+
+	 $scope.runData = function() {
+	 	//remove
+ 		angular.forEach($scope.markers, function(marker) {
+    marker.setMap(null);
+    });
+	 	$scope.filterData($scope.locationselect.model, $scope.locationselect.loc )
+	 }
+
+  var mapOptions = {
+      zoom: 12,
+      center: new google.maps.LatLng(37.774172,-122.431558),
+      mapTypeId: google.maps.MapTypeId.TERRAIN
+  }
+
+  $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+  $scope.markers = [];
+
+  var infoWindow = new google.maps.InfoWindow();
+
+  var createMarker = function (info) {
+
+      var marker = new google.maps.Marker({
+          map: $scope.map,
+          position: new google.maps.LatLng(Number(info.y), Number(info.x)),
+          title: info.pddistrict
+      });
+
+      marker.content = '<div class="infoWindowContent">' + info.category + '</div>';
+
+      google.maps.event.addListener(marker, 'click', function(){
+          infoWindow.setContent('<h2>' + marker.title + '</h2>' + marker.content);
+          infoWindow.open($scope.map, marker);
+      });
+
+      $scope.markers.push(marker);
+
+  }
+  $scope.openInfoWindow = function(e, selectedMarker){
+      e.preventDefault();
+      google.maps.event.trigger(selectedMarker, 'click');
+  }
 
 });
+
+app.directive("crimeData",function() {
+  return {
+    restrict: 'E',
+    controller: 'MapCtrl',
+    // bindTocontroller: true,
+    // controllerAs: 'ctrl',
+    restrict: `E`,
+    template: `<div>
+                <h1>StreetWatch</h1>
+                <select-crime-filter><select-crime-filter>
+                <select-location-filter></select-location-filter>
+                <div id="map"></div>
+              </div>`
+  };
+});
+
+
